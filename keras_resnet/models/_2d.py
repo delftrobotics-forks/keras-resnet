@@ -15,6 +15,7 @@ import keras.models
 import keras.regularizers
 
 import keras_resnet.blocks
+import keras_resnet.layers
 
 
 """
@@ -53,16 +54,14 @@ Usage:
     >>> model.compile("adam", "categorical_crossentropy", ["accuracy"])
 
 """
-def ResNet(inputs, blocks, block, include_top=True, classes=1000, freeze_bn=True, *args, **kwargs):
+def ResNet(inputs, blocks, block, include_top=True, classes=1000, freeze_bn=False, *args, **kwargs):
     if keras.backend.image_data_format() == "channels_last":
         axis = 3
     else:
         axis = 1
 
     x = keras.layers.Conv2D(64, (7, 7), strides=(2, 2), padding="same", name="conv1")(inputs)
-    l = keras.layers.BatchNormalization(axis=axis, name="bn_conv1")
-    l.trainable = not freeze_bn
-    x = l(x, training=(not freeze_bn))
+    x = keras_resnet.layers.BatchNormalization(axis=axis, freeze=freeze_bn, name="bn_conv1")(x)
     x = keras.layers.Activation("relu", name="conv1_relu")(x)
     x = keras.layers.MaxPooling2D((3, 3), strides=(2, 2), padding="same", name="pool1")(x)
 
