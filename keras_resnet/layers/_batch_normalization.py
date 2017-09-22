@@ -13,4 +13,4 @@ class BatchNormalization(keras.layers.BatchNormalization):
 
 	def call(self, *args, **kwargs):
 		# return super.call, but set training
-		return super(BatchNormalization, self).call(*args, **kwargs, training=(not self.freeze))
+		return super(BatchNormalization, self).call(training=(not self.freeze), *args, **kwargs)
