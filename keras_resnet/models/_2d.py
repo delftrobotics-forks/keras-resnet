@@ -83,7 +83,7 @@ def ResNet(inputs, blocks, block, include_top=True, classes=1000, freeze_bn=True
         assert classes > 0
 
         x = keras.layers.GlobalAveragePooling2D(name="pool5")(x)
-        x = keras.layers.Dense(classes, activation="softmax", name="fc1000")(x)
+        x = keras.layers.Dense(classes, activation="softmax", name="fc")(x)
 
         return keras.models.Model(inputs=inputs, outputs=x, *args, **kwargs)
     else:
