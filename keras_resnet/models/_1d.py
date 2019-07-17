@@ -7,20 +7,17 @@ keras_resnet.models._1d
 This module implements popular one-dimensional residual models.
 """
 
-import keras.backend
-import keras.layers
-import keras.models
-import keras.regularizers
+import tensorflow as tf
 
 import keras_resnet.blocks
 import keras_resnet.layers
 
 
-class ResNet1D(keras.Model):
+class ResNet1D(tf.keras.Model):
     """
-    Constructs a `keras.models.Model` object using the given block count.
+    Constructs a `tf.keras.models.Model` object using the given block count.
 
-    :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
+    :param inputs: input tensor (e.g. an instance of `tf.keras.layers.Input`)
 
     :param blocks: the network’s residual architecture
 
@@ -43,7 +40,7 @@ class ResNet1D(keras.Model):
 
         >>> shape, classes = (224, 224, 3), 1000
 
-        >>> x = keras.layers.Input(shape)
+        >>> x = tf.keras.layers.Input(shape)
 
         >>> blocks = [2, 2, 2, 2]
 
@@ -65,7 +62,7 @@ class ResNet1D(keras.Model):
         *args,
         **kwargs
     ):
-        if keras.backend.image_data_format() == "channels_last":
+        if tf.keras.backend.image_data_format() == "channels_last":
             axis = 3
         else:
             axis = 1
@@ -73,11 +70,11 @@ class ResNet1D(keras.Model):
         if numerical_names is None:
             numerical_names = [True] * len(blocks)
 
-        x = keras.layers.ZeroPadding1D(padding=3, name="padding_conv1")(inputs)
-        x = keras.layers.Conv1D(64, (7, 7), strides=(2, 2), use_bias=False, name="conv1")(x)
+        x = tf.keras.layers.ZeroPadding1D(padding=3, name="padding_conv1")(inputs)
+        x = tf.keras.layers.Conv1D(64, (7, 7), strides=(2, 2), use_bias=False, name="conv1")(x)
         x = keras_resnet.layers.BatchNormalization(axis=axis, epsilon=1e-5, freeze=freeze_bn, name="bn_conv1")(x)
-        x = keras.layers.Activation("relu", name="conv1_relu")(x)
-        x = keras.layers.MaxPooling1D((3, 3), strides=(2, 2), padding="same", name="pool1")(x)
+        x = tf.keras.layers.Activation("relu", name="conv1_relu")(x)
+        x = tf.keras.layers.MaxPooling1D((3, 3), strides=(2, 2), padding="same", name="pool1")(x)
 
         features = 64
 
@@ -100,8 +97,8 @@ class ResNet1D(keras.Model):
         if include_top:
             assert classes > 0
 
-            x = keras.layers.GlobalAveragePooling1D(name="pool5")(x)
-            x = keras.layers.Dense(classes, activation="softmax", name="fc1000")(x)
+            x = tf.keras.layers.GlobalAveragePooling1D(name="pool5")(x)
+            x = tf.keras.layers.Dense(classes, activation="softmax", name="fc1000")(x)
 
             super(ResNet1D, self).__init__(inputs=inputs, outputs=x, *args, **kwargs)
         else:
@@ -111,9 +108,9 @@ class ResNet1D(keras.Model):
 
 class ResNet1D18(ResNet1D):
     """
-    Constructs a `keras.models.Model` according to the ResNet18 specifications.
+    Constructs a `tf.keras.models.Model` according to the ResNet18 specifications.
 
-    :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
+    :param inputs: input tensor (e.g. an instance of `tf.keras.layers.Input`)
 
     :param blocks: the network’s residual architecture
 
@@ -131,7 +128,7 @@ class ResNet1D18(ResNet1D):
 
         >>> shape, classes = (224, 224, 3), 1000
 
-        >>> x = keras.layers.Input(shape)
+        >>> x = tf.keras.layers.Input(shape)
 
         >>> model = keras_resnet.models.ResNet18(x, classes=classes)
 
@@ -155,9 +152,9 @@ class ResNet1D18(ResNet1D):
 
 class ResNet1D34(ResNet1D):
     """
-    Constructs a `keras.models.Model` according to the ResNet34 specifications.
+    Constructs a `tf.keras.models.Model` according to the ResNet34 specifications.
 
-    :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
+    :param inputs: input tensor (e.g. an instance of `tf.keras.layers.Input`)
 
     :param blocks: the network’s residual architecture
 
@@ -175,7 +172,7 @@ class ResNet1D34(ResNet1D):
 
         >>> shape, classes = (224, 224, 3), 1000
 
-        >>> x = keras.layers.Input(shape)
+        >>> x = tf.keras.layers.Input(shape)
 
         >>> model = keras_resnet.models.ResNet34(x, classes=classes)
 
@@ -199,9 +196,9 @@ class ResNet1D34(ResNet1D):
 
 class ResNet1D50(ResNet1D):
     """
-    Constructs a `keras.models.Model` according to the ResNet50 specifications.
+    Constructs a `tf.keras.models.Model` according to the ResNet50 specifications.
 
-    :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
+    :param inputs: input tensor (e.g. an instance of `tf.keras.layers.Input`)
 
     :param blocks: the network’s residual architecture
 
@@ -219,7 +216,7 @@ class ResNet1D50(ResNet1D):
 
         >>> shape, classes = (224, 224, 3), 1000
 
-        >>> x = keras.layers.Input(shape)
+        >>> x = tf.keras.layers.Input(shape)
 
         >>> model = keras_resnet.models.ResNet50(x)
 
@@ -246,9 +243,9 @@ class ResNet1D50(ResNet1D):
 
 class ResNet1D101(ResNet1D):
     """
-    Constructs a `keras.models.Model` according to the ResNet101 specifications.
+    Constructs a `tf.keras.models.Model` according to the ResNet101 specifications.
 
-    :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
+    :param inputs: input tensor (e.g. an instance of `tf.keras.layers.Input`)
 
     :param blocks: the network’s residual architecture
 
@@ -266,7 +263,7 @@ class ResNet1D101(ResNet1D):
 
         >>> shape, classes = (224, 224, 3), 1000
 
-        >>> x = keras.layers.Input(shape)
+        >>> x = tf.keras.layers.Input(shape)
 
         >>> model = keras_resnet.models.ResNet101(x, classes=classes)
 
@@ -293,9 +290,9 @@ class ResNet1D101(ResNet1D):
 
 class ResNet1D152(ResNet1D):
     """
-    Constructs a `keras.models.Model` according to the ResNet152 specifications.
+    Constructs a `tf.keras.models.Model` according to the ResNet152 specifications.
 
-    :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
+    :param inputs: input tensor (e.g. an instance of `tf.keras.layers.Input`)
 
     :param blocks: the network’s residual architecture
 
@@ -313,7 +310,7 @@ class ResNet1D152(ResNet1D):
 
         >>> shape, classes = (224, 224, 3), 1000
 
-        >>> x = keras.layers.Input(shape)
+        >>> x = tf.keras.layers.Input(shape)
 
         >>> model = keras_resnet.models.ResNet152(x, classes=classes)
 
@@ -340,9 +337,9 @@ class ResNet1D152(ResNet1D):
 
 class ResNet1D200(ResNet1D):
     """
-    Constructs a `keras.models.Model` according to the ResNet200 specifications.
+    Constructs a `tf.keras.models.Model` according to the ResNet200 specifications.
 
-    :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
+    :param inputs: input tensor (e.g. an instance of `tf.keras.layers.Input`)
 
     :param blocks: the network’s residual architecture
 
@@ -360,7 +357,7 @@ class ResNet1D200(ResNet1D):
 
         >>> shape, classes = (224, 224, 3), 1000
 
-        >>> x = keras.layers.Input(shape)
+        >>> x = tf.keras.layers.Input(shape)
 
         >>> model = keras_resnet.models.ResNet200(x, classes=classes)
 

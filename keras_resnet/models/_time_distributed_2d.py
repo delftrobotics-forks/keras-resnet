@@ -7,10 +7,7 @@ keras_resnet.models._time_distributed_2d
 This module implements popular time distributed two-dimensional residual networks.
 """
 
-import keras.backend
-import keras.layers
-import keras.models
-import keras.regularizers
+import tensorflow as tf
 
 import keras_resnet.blocks
 import keras_resnet.layers
@@ -18,9 +15,9 @@ import keras_resnet.layers
 
 def TimeDistributedResNet(inputs, blocks, block, include_top=True, classes=1000, freeze_bn=True, *args, **kwargs):
     """
-    Constructs a time distributed `keras.models.Model` object using the given block count.
+    Constructs a time distributed `tf.keras.models.Model` object using the given block count.
 
-    :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
+    :param inputs: input tensor (e.g. an instance of `tf.keras.layers.Input`)
 
     :param blocks: the network’s residual architecture
 
@@ -41,7 +38,7 @@ def TimeDistributedResNet(inputs, blocks, block, include_top=True, classes=1000,
 
         >>> shape, classes = (224, 224, 3), 1000
 
-        >>> x = keras.layers.Input(shape)
+        >>> x = tf.keras.layers.Input(shape)
 
         >>> blocks = [2, 2, 2, 2]
 
@@ -49,24 +46,24 @@ def TimeDistributedResNet(inputs, blocks, block, include_top=True, classes=1000,
 
         >>> y = keras_resnet.models.TimeDistributedResNet(x, classes, blocks, blocks)
 
-        >>> y = keras.layers.TimeDistributed(keras.layers.Flatten())(y.output)
+        >>> y = tf.keras.layers.TimeDistributed(tf.keras.layers.Flatten())(y.output)
 
-        >>> y = keras.layers.TimeDistributed(keras.layers.Dense(classes, activation="softmax"))(y)
+        >>> y = tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(classes, activation="softmax"))(y)
 
-        >>> model = keras.models.Model(x, y)
+        >>> model = tf.keras.models.Model(x, y)
 
         >>> model.compile("adam", "categorical_crossentropy", ["accuracy"])
     """
-    if keras.backend.image_data_format() == "channels_last":
+    if tf.keras.backend.image_data_format() == "channels_last":
         axis = 3
     else:
         axis = 1
 
-    x = keras.layers.TimeDistributed(keras.layers.ZeroPadding2D(padding=3), name="padding_conv1")(inputs)
-    x = keras.layers.TimeDistributed(keras.layers.Conv2D(64, (7, 7), strides=(2, 2), use_bias=False), name="conv1")(x)
-    x = keras.layers.TimeDistributed(keras_resnet.layers.BatchNormalization(axis=axis, epsilon=1e-5, freeze=freeze_bn), name="bn_conv1")(x)
-    x = keras.layers.TimeDistributed(keras.layers.Activation("relu"), name="conv1_relu")(x)
-    x = keras.layers.TimeDistributed(keras.layers.MaxPooling2D((3, 3), strides=(2, 2), padding="same"), name="pool1")(x)
+    x = tf.keras.layers.TimeDistributed(tf.keras.layers.ZeroPadding2D(padding=3), name="padding_conv1")(inputs)
+    x = tf.keras.layers.TimeDistributed(tf.keras.layers.Conv2D(64, (7, 7), strides=(2, 2), use_bias=False), name="conv1")(x)
+    x = tf.keras.layers.TimeDistributed(keras_resnet.layers.BatchNormalization(axis=axis, epsilon=1e-5, freeze=freeze_bn), name="bn_conv1")(x)
+    x = tf.keras.layers.TimeDistributed(tf.keras.layers.Activation("relu"), name="conv1_relu")(x)
+    x = tf.keras.layers.TimeDistributed(tf.keras.layers.MaxPooling2D((3, 3), strides=(2, 2), padding="same"), name="pool1")(x)
 
     features = 64
 
@@ -82,20 +79,20 @@ def TimeDistributedResNet(inputs, blocks, block, include_top=True, classes=1000,
     if include_top:
         assert classes > 0
 
-        x = keras.layers.TimeDistributed(keras.layers.GlobalAveragePooling2D(), name="pool5")(x)
-        x = keras.layers.TimeDistributed(keras.layers.Dense(classes, activation="softmax"), name="fc1000")(x)
+        x = tf.keras.layers.TimeDistributed(tf.keras.layers.GlobalAveragePooling2D(), name="pool5")(x)
+        x = tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(classes, activation="softmax"), name="fc1000")(x)
 
-        return keras.models.Model(inputs=inputs, outputs=x, *args, **kwargs)
+        return tf.keras.models.Model(inputs=inputs, outputs=x, *args, **kwargs)
     else:
         # Else output each stages features
-        return keras.models.Model(inputs=inputs, outputs=outputs, *args, **kwargs)
+        return tf.keras.models.Model(inputs=inputs, outputs=outputs, *args, **kwargs)
 
 
 def TimeDistributedResNet18(inputs, blocks=None, include_top=True, classes=1000, *args, **kwargs):
     """
-    Constructs a time distributed `keras.models.Model` according to the ResNet18 specifications.
+    Constructs a time distributed `tf.keras.models.Model` according to the ResNet18 specifications.
 
-    :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
+    :param inputs: input tensor (e.g. an instance of `tf.keras.layers.Input`)
 
     :param blocks: the network’s residual architecture
 
@@ -111,15 +108,15 @@ def TimeDistributedResNet18(inputs, blocks=None, include_top=True, classes=1000,
 
         >>> shape, classes = (224, 224, 3), 1000
 
-        >>> x = keras.layers.Input(shape)
+        >>> x = tf.keras.layers.Input(shape)
 
         >>> y = keras_resnet.models.TimeDistributedResNet18(x)
 
-        >>> y = keras.layers.TimeDistributed(keras.layers.Flatten())(y.output)
+        >>> y = tf.keras.layers.TimeDistributed(tf.keras.layers.Flatten())(y.output)
 
-        >>> y = keras.layers.TimeDistributed(keras.layers.Dense(classes, activation="softmax"))(y)
+        >>> y = tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(classes, activation="softmax"))(y)
 
-        >>> model = keras.models.Model(x, y)
+        >>> model = tf.keras.models.Model(x, y)
 
         >>> model.compile("adam", "categorical_crossentropy", ["accuracy"])
     """
@@ -131,9 +128,9 @@ def TimeDistributedResNet18(inputs, blocks=None, include_top=True, classes=1000,
 
 def TimeDistributedResNet34(inputs, blocks=None, include_top=True, classes=1000, *args, **kwargs):
     """
-    Constructs a time distributed `keras.models.Model` according to the ResNet34 specifications.
+    Constructs a time distributed `tf.keras.models.Model` according to the ResNet34 specifications.
 
-    :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
+    :param inputs: input tensor (e.g. an instance of `tf.keras.layers.Input`)
 
     :param blocks: the network’s residual architecture
 
@@ -149,15 +146,15 @@ def TimeDistributedResNet34(inputs, blocks=None, include_top=True, classes=1000,
 
         >>> shape, classes = (224, 224, 3), 1000
 
-        >>> x = keras.layers.Input(shape)
+        >>> x = tf.keras.layers.Input(shape)
 
         >>> y = keras_resnet.models.TimeDistributedResNet34(x)
 
-        >>> y = keras.layers.TimeDistributed(keras.layers.Flatten())(y.output)
+        >>> y = tf.keras.layers.TimeDistributed(tf.keras.layers.Flatten())(y.output)
 
-        >>> y = keras.layers.TimeDistributed(keras.layers.Dense(classes, activation="softmax"))(y)
+        >>> y = tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(classes, activation="softmax"))(y)
 
-        >>> model = keras.models.Model(x, y)
+        >>> model = tf.keras.models.Model(x, y)
 
         >>> model.compile("adam", "categorical_crossentropy", ["accuracy"])
     """
@@ -169,9 +166,9 @@ def TimeDistributedResNet34(inputs, blocks=None, include_top=True, classes=1000,
 
 def TimeDistributedResNet50(inputs, blocks=None, include_top=True, classes=1000, *args, **kwargs):
     """
-    Constructs a time distributed `keras.models.Model` according to the ResNet50 specifications.
+    Constructs a time distributed `tf.keras.models.Model` according to the ResNet50 specifications.
 
-    :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
+    :param inputs: input tensor (e.g. an instance of `tf.keras.layers.Input`)
 
     :param blocks: the network’s residual architecture
 
@@ -185,15 +182,15 @@ def TimeDistributedResNet50(inputs, blocks=None, include_top=True, classes=1000,
 
         >>> shape, classes = (224, 224, 3), 1000
 
-        >>> x = keras.layers.Input(shape)
+        >>> x = tf.keras.layers.Input(shape)
 
         >>> y = keras_resnet.models.TimeDistributedResNet50(x)
 
-        >>> y = keras.layers.TimeDistributed(keras.layers.Flatten())(y.output)
+        >>> y = tf.keras.layers.TimeDistributed(tf.keras.layers.Flatten())(y.output)
 
-        >>> y = keras.layers.TimeDistributed(keras.layers.Dense(classes, activation="softmax"))(y)
+        >>> y = tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(classes, activation="softmax"))(y)
 
-        >>> model = keras.models.Model(x, y)
+        >>> model = tf.keras.models.Model(x, y)
 
         >>> model.compile("adam", "categorical_crossentropy", ["accuracy"])
     """
@@ -205,9 +202,9 @@ def TimeDistributedResNet50(inputs, blocks=None, include_top=True, classes=1000,
 
 def TimeDistributedResNet101(inputs, blocks=None, include_top=True, classes=1000, *args, **kwargs):
     """
-    Constructs a time distributed `keras.models.Model` according to the ResNet101 specifications.
+    Constructs a time distributed `tf.keras.models.Model` according to the ResNet101 specifications.
 
-    :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
+    :param inputs: input tensor (e.g. an instance of `tf.keras.layers.Input`)
 
     :param blocks: the network’s residual architecture
 
@@ -223,15 +220,15 @@ def TimeDistributedResNet101(inputs, blocks=None, include_top=True, classes=1000
 
         >>> shape, classes = (224, 224, 3), 1000
 
-        >>> x = keras.layers.Input(shape)
+        >>> x = tf.keras.layers.Input(shape)
 
         >>> y = keras_resnet.models.TimeDistributedResNet101(x)
 
-        >>> y = keras.layers.TimeDistributed(keras.layers.Flatten())(y.output)
+        >>> y = tf.keras.layers.TimeDistributed(tf.keras.layers.Flatten())(y.output)
 
-        >>> y = keras.layers.TimeDistributed(keras.layers.Dense(classes, activation="softmax"))(y)
+        >>> y = tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(classes, activation="softmax"))(y)
 
-        >>> model = keras.models.Model(x, y)
+        >>> model = tf.keras.models.Model(x, y)
 
         >>> model.compile("adam", "categorical_crossentropy", ["accuracy"])
     """
@@ -243,9 +240,9 @@ def TimeDistributedResNet101(inputs, blocks=None, include_top=True, classes=1000
 
 def TimeDistributedResNet152(inputs, blocks=None, include_top=True, classes=1000, *args, **kwargs):
     """
-    Constructs a time distributed `keras.models.Model` according to the ResNet152 specifications.
+    Constructs a time distributed `tf.keras.models.Model` according to the ResNet152 specifications.
 
-    :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
+    :param inputs: input tensor (e.g. an instance of `tf.keras.layers.Input`)
 
     :param blocks: the network’s residual architecture
 
@@ -261,15 +258,15 @@ def TimeDistributedResNet152(inputs, blocks=None, include_top=True, classes=1000
 
         >>> shape, classes = (224, 224, 3), 1000
 
-        >>> x = keras.layers.Input(shape)
+        >>> x = tf.keras.layers.Input(shape)
 
         >>> y = keras_resnet.models.TimeDistributedResNet152(x)
 
-        >>> y = keras.layers.TimeDistributed(keras.layers.Flatten())(y.output)
+        >>> y = tf.keras.layers.TimeDistributed(tf.keras.layers.Flatten())(y.output)
 
-        >>> y = keras.layers.TimeDistributed(keras.layers.Dense(classes, activation="softmax"))(y)
+        >>> y = tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(classes, activation="softmax"))(y)
 
-        >>> model = keras.models.Model(x, y)
+        >>> model = tf.keras.models.Model(x, y)
 
         >>> model.compile("adam", "categorical_crossentropy", ["accuracy"])
     """
@@ -281,9 +278,9 @@ def TimeDistributedResNet152(inputs, blocks=None, include_top=True, classes=1000
 
 def TimeDistributedResNet200(inputs, blocks=None, include_top=True, classes=1000, *args, **kwargs):
     """
-    Constructs a time distributed `keras.models.Model` according to the ResNet200 specifications.
+    Constructs a time distributed `tf.keras.models.Model` according to the ResNet200 specifications.
 
-    :param inputs: input tensor (e.g. an instance of `keras.layers.Input`)
+    :param inputs: input tensor (e.g. an instance of `tf.keras.layers.Input`)
 
     :param blocks: the network’s residual architecture
 
@@ -299,15 +296,15 @@ def TimeDistributedResNet200(inputs, blocks=None, include_top=True, classes=1000
 
         >>> shape, classes = (224, 224, 3), 1000
 
-        >>> x = keras.layers.Input(shape)
+        >>> x = tf.keras.layers.Input(shape)
 
         >>> y = keras_resnet.models.TimeDistributedResNet200(x)
 
-        >>> y = keras.layers.TimeDistributed(keras.layers.Flatten())(y.output)
+        >>> y = tf.keras.layers.TimeDistributed(tf.keras.layers.Flatten())(y.output)
 
-        >>> y = keras.layers.TimeDistributed(keras.layers.Dense(classes, activation="softmax"))(y)
+        >>> y = tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(classes, activation="softmax"))(y)
 
-        >>> model = keras.models.Model(x, y)
+        >>> model = tf.keras.models.Model(x, y)
 
         >>> model.compile("adam", "categorical_crossentropy", ["accuracy"])
     """
