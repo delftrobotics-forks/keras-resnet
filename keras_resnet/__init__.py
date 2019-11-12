@@ -1,5 +1,2 @@
-from . import layers
-
-custom_objects = {
-    'BatchNormalization': layers.BatchNormalization,
-}
+# Keep this for compatibility reasons.
+custom_objects = {}

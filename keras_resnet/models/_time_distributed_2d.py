@@ -13,7 +13,7 @@ import keras_resnet.blocks
 import keras_resnet.layers
 
 
-def TimeDistributedResNet(inputs, blocks, block, include_top=True, classes=1000, freeze_bn=True, *args, **kwargs):
+def TimeDistributedResNet(inputs, blocks, block, include_top=True, classes=1000, trainable_bn=True, *args, **kwargs):
     """
     Constructs a time distributed `tf.keras.models.Model` object using the given block count.
 
@@ -27,7 +27,7 @@ def TimeDistributedResNet(inputs, blocks, block, include_top=True, classes=1000,
 
     :param classes: number of classes to classify (include_top must be true)
 
-    :param freeze_bn: if true, freezes BatchNormalization layers (ie. no updates are done in these layers)
+    :param trainable_bn: if false, freezes BatchNormalization layers (ie. no updates are done in these layers)
 
     :return model: Time distributed ResNet model with encoding output (if `include_top=False`) or classification output (if `include_top=True`)
 
@@ -61,7 +61,7 @@ def TimeDistributedResNet(inputs, blocks, block, include_top=True, classes=1000,
 
     x = tf.keras.layers.TimeDistributed(tf.keras.layers.ZeroPadding2D(padding=3), name="padding_conv1")(inputs)
     x = tf.keras.layers.TimeDistributed(tf.keras.layers.Conv2D(64, (7, 7), strides=(2, 2), use_bias=False), name="conv1")(x)
-    x = tf.keras.layers.TimeDistributed(keras_resnet.layers.BatchNormalization(axis=axis, epsilon=1e-5, freeze=freeze_bn), name="bn_conv1")(x)
+    x = tf.keras.layers.TimeDistributed(tf.keras.layers.BatchNormalization(axis=axis, epsilon=1e-5, trainable=trainable_bn), name="bn_conv1")(x)
     x = tf.keras.layers.TimeDistributed(tf.keras.layers.Activation("relu"), name="conv1_relu")(x)
     x = tf.keras.layers.TimeDistributed(tf.keras.layers.MaxPooling2D((3, 3), strides=(2, 2), padding="same"), name="pool1")(x)
 
@@ -71,7 +71,7 @@ def TimeDistributedResNet(inputs, blocks, block, include_top=True, classes=1000,
 
     for stage_id, iterations in enumerate(blocks):
         for block_id in range(iterations):
-            x = block(features, stage_id, block_id, numerical_name=(blocks[stage_id] > 6), freeze_bn=freeze_bn)(x)
+            x = block(features, stage_id, block_id, numerical_name=(blocks[stage_id] > 6), trainable_bn=trainable_bn)(x)
 
         features *= 2
         outputs.append(x)

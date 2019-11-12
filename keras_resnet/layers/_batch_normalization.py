@@ -13,6 +13,7 @@ class BatchNormalization(tf.keras.layers.BatchNormalization):
         self.trainable = not self.freeze
 
     def call(self, *args, **kwargs):
+        print(kwargs)
         # Force test mode if frozen, otherwise use default behaviour (i.e., training=None).
         if self.freeze:
             kwargs['training'] = False
