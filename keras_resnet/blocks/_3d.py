@@ -23,7 +23,7 @@ def basic_3d(
     kernel_size=3,
     numerical_name=False,
     stride=None,
-    freeze_bn=False
+    trainable_bn=True
 ):
     """
     A three-dimensional basic block.
@@ -40,7 +40,7 @@ def basic_3d(
 
     :param stride: int representing the stride used in the shortcut and the first conv layer, default derives stride from block id
 
-    :param freeze_bn: if true, freezes BatchNormalization layers (ie. no updates are done in these layers)
+    :param trainable_bn: if false, freezes BatchNormalization layers (ie. no updates are done in these layers)
 
     Usage:
 
@@ -71,7 +71,7 @@ def basic_3d(
 
         y = tf.keras.layers.Conv3D(filters, kernel_size, strides=stride, use_bias=False, name="res{}{}_branch2a".format(stage_char, block_char), **parameters)(y)
 
-        y = keras_resnet.layers.BatchNormalization(axis=axis, epsilon=1e-5, freeze=freeze_bn, name="bn{}{}_branch2a".format(stage_char, block_char))(y)
+        y = tf.keras.layers.BatchNormalization(axis=axis, epsilon=1e-5, trainable=trainable_bn, name="bn{}{}_branch2a".format(stage_char, block_char))(y)
 
         y = tf.keras.layers.Activation("relu", name="res{}{}_branch2a_relu".format(stage_char, block_char))(y)
 
@@ -79,12 +79,12 @@ def basic_3d(
 
         y = tf.keras.layers.Conv3D(filters, kernel_size, use_bias=False, name="res{}{}_branch2b".format(stage_char, block_char), **parameters)(y)
 
-        y = keras_resnet.layers.BatchNormalization(axis=axis, epsilon=1e-5, freeze=freeze_bn, name="bn{}{}_branch2b".format(stage_char, block_char))(y)
+        y = tf.keras.layers.BatchNormalization(axis=axis, epsilon=1e-5, trainable=trainable_bn, name="bn{}{}_branch2b".format(stage_char, block_char))(y)
 
         if block == 0:
             shortcut = tf.keras.layers.Conv3D(filters, (1, 1), strides=stride, use_bias=False, name="res{}{}_branch1".format(stage_char, block_char), **parameters)(x)
 
-            shortcut = keras_resnet.layers.BatchNormalization(axis=axis, epsilon=1e-5, freeze=freeze_bn, name="bn{}{}_branch1".format(stage_char, block_char))(shortcut)
+            shortcut = tf.keras.layers.BatchNormalization(axis=axis, epsilon=1e-5, trainable=trainable_bn, name="bn{}{}_branch1".format(stage_char, block_char))(shortcut)
         else:
             shortcut = x
 
@@ -104,7 +104,7 @@ def bottleneck_3d(
     kernel_size=3,
     numerical_name=False,
     stride=None,
-    freeze_bn=False
+    trainable_bn=True
 ):
     """
     A three-dimensional bottleneck block.
@@ -121,7 +121,7 @@ def bottleneck_3d(
 
     :param stride: int representing the stride used in the shortcut and the first conv layer, default derives stride from block id
 
-    :param freeze_bn: if true, freezes BatchNormalization layers (ie. no updates are done in these layers)
+    :param trainable_bn: if false, freezes BatchNormalization layers (ie. no updates are done in these layers)
 
     Usage:
 
@@ -150,7 +150,7 @@ def bottleneck_3d(
     def f(x):
         y = tf.keras.layers.Conv3D(filters, (1, 1), strides=stride, use_bias=False, name="res{}{}_branch2a".format(stage_char, block_char), **parameters)(x)
 
-        y = keras_resnet.layers.BatchNormalization(axis=axis, epsilon=1e-5, freeze=freeze_bn, name="bn{}{}_branch2a".format(stage_char, block_char))(y)
+        y = tf.keras.layers.BatchNormalization(axis=axis, epsilon=1e-5, trainable=trainable_bn, name="bn{}{}_branch2a".format(stage_char, block_char))(y)
 
         y = tf.keras.layers.Activation("relu", name="res{}{}_branch2a_relu".format(stage_char, block_char))(y)
 
@@ -158,18 +158,18 @@ def bottleneck_3d(
 
         y = tf.keras.layers.Conv3D(filters, kernel_size, use_bias=False, name="res{}{}_branch2b".format(stage_char, block_char), **parameters)(y)
 
-        y = keras_resnet.layers.BatchNormalization(axis=axis, epsilon=1e-5, freeze=freeze_bn, name="bn{}{}_branch2b".format(stage_char, block_char))(y)
+        y = tf.keras.layers.BatchNormalization(axis=axis, epsilon=1e-5, trainable=trainable_bn, name="bn{}{}_branch2b".format(stage_char, block_char))(y)
 
         y = tf.keras.layers.Activation("relu", name="res{}{}_branch2b_relu".format(stage_char, block_char))(y)
 
         y = tf.keras.layers.Conv3D(filters * 4, (1, 1), use_bias=False, name="res{}{}_branch2c".format(stage_char, block_char), **parameters)(y)
 
-        y = keras_resnet.layers.BatchNormalization(axis=axis, epsilon=1e-5, freeze=freeze_bn, name="bn{}{}_branch2c".format(stage_char, block_char))(y)
+        y = tf.keras.layers.BatchNormalization(axis=axis, epsilon=1e-5, trainable=trainable_bn, name="bn{}{}_branch2c".format(stage_char, block_char))(y)
 
         if block == 0:
             shortcut = tf.keras.layers.Conv3D(filters * 4, (1, 1), strides=stride, use_bias=False, name="res{}{}_branch1".format(stage_char, block_char), **parameters)(x)
 
-            shortcut = keras_resnet.layers.BatchNormalization(axis=axis, epsilon=1e-5, freeze=freeze_bn, name="bn{}{}_branch1".format(stage_char, block_char))(shortcut)
+            shortcut = tf.keras.layers.BatchNormalization(axis=axis, epsilon=1e-5, trainable=trainable_bn, name="bn{}{}_branch1".format(stage_char, block_char))(shortcut)
         else:
             shortcut = x
 

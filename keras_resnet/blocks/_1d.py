@@ -23,7 +23,7 @@ def basic_1d(
     kernel_size=3,
     numerical_name=False,
     stride=None,
-    freeze_bn=False
+    trainable_bn=True
 ):
     """
     A one-dimensional basic block.
@@ -40,7 +40,7 @@ def basic_1d(
 
     :param stride: int representing the stride used in the shortcut and the first conv layer, default derives stride from block id
 
-    :param freeze_bn: if true, freezes BatchNormalization layers (ie. no updates are done in these layers)
+    :param trainable_bn: if false, freezes BatchNormalization layers (ie. no updates are done in these layers)
 
     Usage:
 
@@ -81,10 +81,10 @@ def basic_1d(
             **parameters
         )(y)
         
-        y = keras_resnet.layers.BatchNormalization(
+        y = tf.keras.layers.BatchNormalization(
             axis=axis,
             epsilon=1e-5,
-            freeze=freeze_bn,
+            trainable=trainable_bn,
             name="bn{}{}_branch2a".format(stage_char, block_char)
         )(y)
         
@@ -106,10 +106,10 @@ def basic_1d(
             **parameters
         )(y)
         
-        y = keras_resnet.layers.BatchNormalization(
+        y = tf.keras.layers.BatchNormalization(
             axis=axis,
             epsilon=1e-5,
-            freeze=freeze_bn,
+            trainable=trainable_bn,
             name="bn{}{}_branch2b".format(stage_char, block_char)
         )(y)
 
@@ -123,10 +123,10 @@ def basic_1d(
                 **parameters
             )(x)
 
-            shortcut = keras_resnet.layers.BatchNormalization(
+            shortcut = tf.keras.layers.BatchNormalization(
                 axis=axis,
                 epsilon=1e-5,
-                freeze=freeze_bn,
+                trainable=trainable_bn,
                 name="bn{}{}_branch1".format(stage_char, block_char)
             )(shortcut)
         else:
@@ -153,7 +153,7 @@ def bottleneck_1d(
     kernel_size=3,
     numerical_name=False,
     stride=None,
-    freeze_bn=False
+    trainable_bn=True
 ):
     """
     A one-dimensional bottleneck block.
@@ -170,7 +170,7 @@ def bottleneck_1d(
 
     :param stride: int representing the stride used in the shortcut and the first conv layer, default derives stride from block id
 
-    :param freeze_bn: if true, freezes BatchNormalization layers (ie. no updates are done in these layers)
+    :param trainable_bn: if false, freezes BatchNormalization layers (ie. no updates are done in these layers)
 
     Usage:
 
@@ -203,10 +203,10 @@ def bottleneck_1d(
             **parameters
         )(x)
 
-        y = keras_resnet.layers.BatchNormalization(
+        y = tf.keras.layers.BatchNormalization(
             axis=axis,
             epsilon=1e-5,
-            freeze=freeze_bn,
+            trainable=trainable_bn,
             name="bn{}{}_branch2a".format(stage_char, block_char)
         )(y)
 
@@ -228,10 +228,10 @@ def bottleneck_1d(
             **parameters
         )(y)
 
-        y = keras_resnet.layers.BatchNormalization(
+        y = tf.keras.layers.BatchNormalization(
             axis=axis,
             epsilon=1e-5,
-            freeze=freeze_bn,
+            trainable=trainable_bn,
             name="bn{}{}_branch2b".format(stage_char, block_char)
         )(y)
 
@@ -248,10 +248,10 @@ def bottleneck_1d(
             **parameters
         )(y)
 
-        y = keras_resnet.layers.BatchNormalization(
+        y = tf.keras.layers.BatchNormalization(
             axis=axis,
             epsilon=1e-5,
-            freeze=freeze_bn,
+            trainable=trainable_bn,
             name="bn{}{}_branch2c".format(stage_char, block_char)
         )(y)
 
@@ -265,10 +265,10 @@ def bottleneck_1d(
                 **parameters
             )(x)
 
-            shortcut = keras_resnet.layers.BatchNormalization(
+            shortcut = tf.keras.layers.BatchNormalization(
                 axis=axis,
                 epsilon=1e-5,
-                freeze=freeze_bn,
+                trainable=trainable_bn,
                 name="bn{}{}_branch1".format(stage_char, block_char)
             )(shortcut)
         else:

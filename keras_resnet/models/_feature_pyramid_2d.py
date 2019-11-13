@@ -19,7 +19,7 @@ class FPN2D(tf.keras.Model):
             inputs,
             blocks,
             block,
-            freeze_bn=True,
+            trainable_bn=True,
             numerical_names=None,
             *args,
             **kwargs
@@ -33,7 +33,7 @@ class FPN2D(tf.keras.Model):
             numerical_names = [True] * len(blocks)
 
         x = tf.keras.layers.Conv2D(64, (7, 7), strides=(2, 2), use_bias=False, name="conv1", padding="same")(inputs)
-        x = keras_resnet.layers.BatchNormalization(axis=axis, epsilon=1e-5, freeze=freeze_bn, name="bn_conv1")(x)
+        x = tf.keras.layers.BatchNormalization(axis=axis, epsilon=1e-5, trainable=trainable_bn, name="bn_conv1")(x)
         x = tf.keras.layers.Activation("relu", name="conv1_relu")(x)
         x = tf.keras.layers.MaxPooling2D((3, 3), strides=(2, 2), padding="same", name="pool1")(x)
 
@@ -48,7 +48,7 @@ class FPN2D(tf.keras.Model):
                     stage_id,
                     block_id,
                     numerical_name=(block_id > 0 and numerical_names[stage_id]),
-                    freeze_bn=freeze_bn
+                    trainable_bn=trainable_bn
                 )(x)
 
             features *= 2
