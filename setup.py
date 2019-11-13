@@ -13,7 +13,7 @@ setuptools.setup(
         ]
     },
     install_requires=[
-        "keras>=2.2.4"
+        "tensorflow>=2.0.0"
     ],
     license="MIT",
     name="keras-resnet",
