@@ -10,7 +10,6 @@ This module implements popular three-dimensional residual models.
 import tensorflow as tf
 
 import keras_resnet.blocks
-import keras_resnet.layers
 
 
 class ResNet3D(tf.keras.Model):

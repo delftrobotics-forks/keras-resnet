@@ -10,7 +10,6 @@ This module implements popular one-dimensional residual models.
 import tensorflow as tf
 
 import keras_resnet.blocks
-import keras_resnet.layers
 
 
 class ResNet1D(tf.keras.Model):

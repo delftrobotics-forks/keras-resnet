@@ -9,8 +9,6 @@ This module implements a number of popular one-dimensional residual blocks.
 
 import tensorflow as tf
 
-import keras_resnet.layers
-
 parameters = {
     "kernel_initializer": "he_normal"
 }

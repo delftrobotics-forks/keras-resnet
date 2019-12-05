@@ -10,7 +10,6 @@ This module implements popular two-dimensional feature pyramid networks (FPNs).
 import tensorflow as tf
 
 import keras_resnet.blocks
-import keras_resnet.layers
 
 
 class FPN2D(tf.keras.Model):

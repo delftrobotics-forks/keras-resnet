@@ -10,7 +10,6 @@ This module implements popular time distributed two-dimensional residual network
 import tensorflow as tf
 
 import keras_resnet.blocks
-import keras_resnet.layers
 
 
 def TimeDistributedResNet(inputs, blocks, block, include_top=True, classes=1000, trainable_bn=True, *args, **kwargs):
